@@ -7,6 +7,7 @@ import java.util.*;
 
 
 public class Main {
+    // va chercher les mots dans le fichier en utilisant l'offset d'octet
     private static void seekPosition(String path, List<Long> posList) {
         try {
             File f = new File(path);
@@ -25,6 +26,7 @@ public class Main {
     }
 
 
+    // Cree la "table" d'indexation
     private static void indexCreation(String path, Index index, String[] indexesNames){
         int[] indexes = index.getLabelPos(indexesNames);
         workingOnFile(path, index, indexes);
@@ -34,25 +36,24 @@ public class Main {
     private static void workingOnFile(String path, Index index, int[] indexesWanted) {
         // lit le fichier, et cree le dictionnaire au fur et a mesure de la lecture
         int currentLine = 0;
-        long currentPoint = 0;
+        long currentPoint = 0;                                                    //   v-- ne passe pas sur projet WEB
         try (FileInputStream inputStream = new FileInputStream(path); Scanner sc = new Scanner(inputStream, StandardCharsets.UTF_8)) {
             while (sc.hasNextLine()) {
                 String line = sc.nextLine();
                 String[] currentRow = line.split(",");
                 if (currentLine > 2) {
                     String[] currentKeyName = index.keyNameFromArray(currentRow, indexesWanted);
-                    index.addKeyValue(currentKeyName, currentPoint);
+                    index.addKeyValue(currentKeyName, currentPoint);  // recupere les Key + offsets courants a placer
                 }
                 byte[] utf8Bytes = line.getBytes(StandardCharsets.UTF_8);
                 if (line.length() > 0) {
                     if (currentLine == 0)
-                        currentPoint = currentPoint + utf8Bytes.length + 3;
+                        currentPoint = currentPoint + utf8Bytes.length + 3;  // pour les 2 premieres lignes
                     else
-                        currentPoint = currentPoint + utf8Bytes.length + 2;
+                        currentPoint = currentPoint + utf8Bytes.length + 2;  // pour les "\n"
                 }
                 currentLine++;
             }
-
             // note that Scanner suppresses exceptions
             if (sc.ioException() != null) {
                 throw sc.ioException();
@@ -76,7 +77,7 @@ public class Main {
     public static void main(String[] args) {
         String filePath = "src/data/yellow_tripdata_2009-01.csv";
         // ================================================= EXEMPLE 1 =================================================
-//        intersectionExample(filePath);
+        intersectionExample(filePath);
 
 
         // ================================================= EXEMPLE 2 =================================================
@@ -103,10 +104,7 @@ public class Main {
                 {"vendor_name", "Passenger_Count", "surcharge", "Tolls_Amt"},
 
         }; // labels wanted
-
         findBestIndex(filePath, chosenIndex, valueWanted, indexesNames, labelsWanted);
-
-
     }
 
     private static void findBestIndex(String filePath, String[] chosenIndex, String[] valueWanted, String[][] indexesNames, String[][] labelsWanted) {
