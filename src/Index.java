@@ -1,26 +1,5 @@
 import java.util.*;
 
-/*
-           INDEX (0)                    keys    values   rowFilePos
-          {"VTS", 3L, 3.4, 5.0}, -->    VTS     0,3        0
-          {"CMT", 4L, 3.4, 5.0}, -->    CMT     1,2        6
-          {"CMT", 1L, 3.7, 5.2}, -->                       12
-          {"VTS", 3L, 344, 443}, -->                       18
-
-
-           INDEX (0, 1)                 keys    values   rowFilePos
-          {"VTS", 3L, 3.4, 5.0}, -->    VTS3    0,3       0
-          {"CMT", 4L, 3.4, 5.0}, -->    CMT4    1         6
-          {"CMT", 1L, 3.7, 5.2}, -->    CMT1    2         12
-          {"VTS", 3L, 34435, 443343}                      18
- */
-
-/*
-    Exemple d'index : INDEX(vendorid), INDEX(vendorid, pulocationid), INDEX(fare_amt, total_amt, vendorid)
-    Si je fais SELECT vendorid where vendorid = 2 --> je prends l'index 1
-    Si je fais SELECT vendorid where vendorid = 2 AND fare_amt = 5 --> je prends l'index 3
- */
-
 public class Index {
     // L'index a creer
     public final String[] indexLabels = {"vendor_name","Trip_Pickup_DateTime","Trip_Dropoff_DateTime","Passenger_Count",
@@ -125,10 +104,8 @@ public class Index {
 
     public List<Long> concatenateElements(List<List<Long>> list2D){
         List<Long> concatenatedList = new ArrayList<>(list2D.get(0));
-        for(int i = 1; i < list2D.size(); i++){
+        for(int i = 1; i < list2D.size(); i++)
             concatenatedList.addAll(list2D.get(i));
-
-        }
         return concatenatedList;
     }
 

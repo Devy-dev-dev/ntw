@@ -7,31 +7,6 @@ import java.util.*;
 
 
 public class Main {
-//    private static void seekPosition(List<List<String>> posList, Index index) {
-//        try {
-//            String path = "src/data/smol.csv";
-//            File f = new File(path);
-//            RandomAccessFile raf = new RandomAccessFile(f, "r");
-//
-//
-//            // previous code
-//            for (List<String> currentKeyFromList: posList) {
-//                List<Long> positions = index.getBytesOffset(currentKeyFromList);
-//                for (Long positionsArray : positions) {
-//                    raf.seek(positionsArray);
-//                    String row = raf.readLine();
-//                    String[] data = row.split(",");
-//                    System.out.println(Arrays.toString(data));
-//                }
-//            }
-//            raf.close();
-//
-//
-//        }catch (IOException e){
-//            e.printStackTrace();
-//        }
-//    }
-
     private static void seekPosition(List<Long> posList) {
         try {
             String path = "src/data/smol.csv";
@@ -46,8 +21,6 @@ public class Main {
                 System.out.println(Arrays.toString(data));
             }
             raf.close();
-
-
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -57,7 +30,6 @@ public class Main {
     private static void indexCreation(Index index, String[] indexesNames){
         int[] indexes = index.getLabelPos(indexesNames);
         workingOnFile(index, indexes);
-
     }
 
     private static void workingOnFile(Index index, int[] indexesWanted) {
@@ -118,7 +90,7 @@ public class Main {
 
         var intersection = new ArrayList<>(positionList);
         intersection.retainAll(positionList2);
-        System.out.println(intersection);
+//        System.out.println("resultat intersection : " +intersection);
 
 
         // ================================================= AFFICHAGE =================================================
