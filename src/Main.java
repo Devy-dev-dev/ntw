@@ -7,13 +7,11 @@ import java.util.*;
 
 
 public class Main {
-    private static void seekPosition(List<Long> posList) {
+    private static void seekPosition(String path, List<Long> posList) {
         try {
-            String path = "src/data/smol.csv";
             File f = new File(path);
             RandomAccessFile raf = new RandomAccessFile(f, "r");
 
-            // previous code
             for (Long positionsArray : posList) {
                 raf.seek(positionsArray);
                 String row = raf.readLine();
@@ -27,13 +25,13 @@ public class Main {
     }
 
 
-    private static void indexCreation(Index index, String[] indexesNames){
+    private static void indexCreation(String path, Index index, String[] indexesNames){
         int[] indexes = index.getLabelPos(indexesNames);
-        workingOnFile(index, indexes);
+        workingOnFile(path, index, indexes);
     }
 
-    private static void workingOnFile(Index index, int[] indexesWanted) {
-        String path = "src/data/smol.csv";
+
+    private static void workingOnFile(String path, Index index, int[] indexesWanted) {
         int currentLine = 0;
         long currentPoint = 0;
         try (FileInputStream inputStream = new FileInputStream(path); Scanner sc = new Scanner(inputStream, StandardCharsets.UTF_8)) {
@@ -63,8 +61,24 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) {
 
+    private static List<Long> fetchValidElementsOffset(Index index, String[] indexesNames, String[] labelWanted, String[] valueWanted) {
+        Set<List<String>> keysSet = index.keys.keySet();
+        List<List<String>> indexWanted = new ArrayList<>();
+        int[] indexAsked = index.getUserNamePos(labelWanted, indexesNames);
+        index.retrieveNarrowerIndex(keysSet, indexWanted, indexAsked, valueWanted);
+        List<List<Long>> indexList = index.getBytesOffsetList(indexWanted);
+        return index.concatenateElements(indexList);
+    }
+
+
+    public static void main(String[] args) {
+        String filePath = "src/data/smol.csv";
+        intersectionExample(filePath);
+
+    }
+
+    private static void intersectionExample(String filePath) {
         // ================================================= 1ST INDEX =================================================
         // Create index
         Index index = new Index();
@@ -72,7 +86,7 @@ public class Main {
         String[] labelWanted = {"vendor_name"};                  // label wanted
         String[] valueWanted = {"VTS"};                          // name for this wanted label
 
-        indexCreation(index, indexesNames);
+        indexCreation(filePath, index, indexesNames);
         // Find all Keys
         List<Long> positionList = fetchValidElementsOffset(index, indexesNames, labelWanted, valueWanted);
 
@@ -84,7 +98,7 @@ public class Main {
         String[] labelWanted2 = {"Passenger_Count"};                  // label wanted
         String[] valueWanted2 = {"2"};                          // name for this wanted label
 
-        indexCreation(index2, indexesNames2);
+        indexCreation(filePath, index2, indexesNames2);
         // Find all Keys
         List<Long> positionList2 = fetchValidElementsOffset(index2, indexesNames2, labelWanted2, valueWanted2);
 
@@ -94,16 +108,7 @@ public class Main {
 
 
         // ================================================= AFFICHAGE =================================================
-        seekPosition(intersection);
-
+        seekPosition(filePath, intersection);
     }
 
-    private static List<Long> fetchValidElementsOffset(Index index, String[] indexesNames, String[] labelWanted, String[] valueWanted) {
-        Set<List<String>> keysSet = index.keys.keySet();
-        List<List<String>> indexWanted = new ArrayList<>();
-        int[] indexAsked = index.getUserNamePos(labelWanted, indexesNames);
-        index.retrieveNarrowerIndex(keysSet, indexWanted, indexAsked, valueWanted);
-        List<List<Long>> indexList = index.getBytesOffsetList(indexWanted);
-        return index.concatenateElements(indexList);
-    }
 }
