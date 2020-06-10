@@ -78,6 +78,8 @@ public class Index {
     }
 
     // if multiple label are asked, ex: {"vendor_name", "Payment_Type"} --> return their position
+    // Ex: if "Passenger_Count", "vendor_name", "surcharge" --> 1, 2, 3
+    // Dons l'utilisateur peut specifier des index dans le desordre
     public int[] getUserNamePos(String[] names, String[] userIndexNames){
         int[] namePositionInArray = new int[names.length];
         for(int i = 0; i < names.length; i++)
