@@ -27,7 +27,7 @@ public class Index {
             "Trip_Distance","Start_Lon","Start_Lat","Rate_Code","store_and_forward","End_Lon","End_Lat","Payment_Type",
             "Fare_Amt","surcharge","mta_tax","Tip_Amt","Tolls_Amt","Total_Amt"};
 
-    public Map<List<String>, List<Long>> keys = new HashMap<>();
+    public Map<List<String>, List<Long>> keys = new HashMap<>();  // l'index
 
 
     public void addKeyValue(String[] keyName, long rowFilePos){
@@ -121,6 +121,15 @@ public class Index {
             if (isFound)
                 indexWanted.add(currentSet);
         }
+    }
+
+    public List<Long> concatenateElements(List<List<Long>> list2D){
+        List<Long> concatenatedList = new ArrayList<>(list2D.get(0));
+        for(int i = 1; i < list2D.size(); i++){
+            concatenatedList.addAll(list2D.get(i));
+
+        }
+        return concatenatedList;
     }
 
 
