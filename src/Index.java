@@ -9,6 +9,8 @@ public class Index {
     public Map<List<String>, List<Long>> keys = new HashMap<>();  // l'index
 
 
+    // Ajoute la clef unique (ou multiple) pour creer le dict
+    // Ex: {"vendor_name"}, ou bien {"vendor_name", "Passenger_Count", "surcharge"}
     public void addKeyValue(String[] keyName, long rowFilePos){
         List<Long> listItemsInKey = keys.get(Arrays.asList(keyName));
         if (listItemsInKey == null){
@@ -19,6 +21,7 @@ public class Index {
             listItemsInKey.add(rowFilePos);
     }
 
+    // Recupere la/les clef(s) appropriees pour ensuite utiliser addKeyValue
     public String[] keyNameFromArray(String[] readData, int[] indexWanted){
         String[] keyName = new String[indexWanted.length];
         for (int i = 0; i < indexWanted.length; i++){
@@ -28,11 +31,13 @@ public class Index {
     }
 
 
+    // Recupere l'offset en octet pour aller le lire sur le fichier directement
+    // Il faut passer en parametres la clef requise (cf. addKeyValue)
     public List<Long> getBytesOffset(List<String> key){
         return this.keys.get(key);
     }
 
-
+    // La meme chose mais avec plusieurs clefs presentes. Appelle la fonction ci-dessus
     public List<List<Long>> getBytesOffsetList(List<List<String>> keys){
         List<List<Long>> keysList = new ArrayList<>();
         for (List<String> key : keys) {
@@ -44,6 +49,8 @@ public class Index {
 
 
 
+    // Recupere la position a partir du nom de l'index.
+    // Ex : Trip_Pickup_DateTime  --> retourne 1
     public int getLabelPos(String indexName){
         for (int i = 0; i < indexLabels.length; i++){
             if (indexName.equals(indexLabels[i]))
@@ -52,6 +59,7 @@ public class Index {
         return -1;
     }
 
+    // la meme chose mais pour plusieurs noms d'indexes
     public int[] getLabelPos(String[] indexNames){
         int[] labelPositions = new int[indexNames.length];
         for(int i = 0; i < indexNames.length; i++)

@@ -32,6 +32,7 @@ public class Main {
 
 
     private static void workingOnFile(String path, Index index, int[] indexesWanted) {
+        // lit le fichier, et cree le dictionnaire au fur et a mesure de la lecture
         int currentLine = 0;
         long currentPoint = 0;
         try (FileInputStream inputStream = new FileInputStream(path); Scanner sc = new Scanner(inputStream, StandardCharsets.UTF_8)) {
@@ -73,7 +74,7 @@ public class Main {
 
 
     public static void main(String[] args) {
-        String filePath = "src/data/smol.csv";
+        String filePath = "src/data/yellow_tripdata_2009-01.csv";
         // ================================================= EXEMPLE 1 =================================================
 //        intersectionExample(filePath);
 
