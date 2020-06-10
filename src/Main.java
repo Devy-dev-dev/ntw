@@ -74,8 +74,70 @@ public class Main {
 
     public static void main(String[] args) {
         String filePath = "src/data/smol.csv";
-        intersectionExample(filePath);
+        // ================================================= EXEMPLE 1 =================================================
+//        intersectionExample(filePath);
 
+
+        // ================================================= EXEMPLE 2 =================================================
+        /*
+        Exemple d'index : INDEX(vendorid), INDEX(vendorid, pulocationid), INDEX(fare_amt, total_amt, vendorid)
+        Si je fais SELECT vendorid where vendorid = 2 --> je prends l'index 1
+        Si je fais SELECT vendorid where vendorid = 2 AND fare_amt = 5 --> je prends l'index 3
+         */
+        String[] chosenIndex = {"vendor_name", "Passenger_Count"}; // index user wants
+        String[] valueWanted = {"VTS", "3"};  // values user wants
+        // equivaux a SELECT vendor_name = "VTS" AND Passenger_Count = "3
+
+        // Some index to test
+        String[][] indexesNames = {{"vendor_name"},
+                {"vendor_name", "Passenger_Count", "surcharge"},
+                {"vendor_name", "Passenger_Count"},
+                {"vendor_name", "Passenger_Count", "surcharge", "Tolls_Amt"},
+
+        }; // indexes
+
+        String[][] labelsWanted = {{"vendor_name"},
+                {"vendor_name", "Passenger_Count", "surcharge"},
+                {"vendor_name", "Passenger_Count"},
+                {"vendor_name", "Passenger_Count", "surcharge", "Tolls_Amt"},
+
+        }; // labels wanted
+
+        findBestIndex(filePath, chosenIndex, valueWanted, indexesNames, labelsWanted);
+
+
+    }
+
+    private static void findBestIndex(String filePath, String[] chosenIndex, String[] valueWanted, String[][] indexesNames, String[][] labelsWanted) {
+        Index[] indexes = new Index[indexesNames.length];
+        for(int i = 0; i < indexes.length; i++)
+            indexes[i] =  new Index();
+
+        for(int i = 0; i < indexes.length; i++)
+            indexCreation(filePath, indexes[i], indexesNames[i]);
+
+        boolean[] isValidIndex = new boolean[indexes.length];
+        for(int i = 0; i < indexesNames.length; i++)
+            isValidIndex[i] = Arrays.asList(indexesNames[i]).containsAll(Arrays.asList(chosenIndex));
+
+        String[] bestIndex = new String[1000];   // permet de trouver le meilleur meme dans le desordre
+        int bestPosition = 0;
+        for(int i = 0; i < indexes.length; i++){
+            if (isValidIndex[i] && indexesNames[i].length == chosenIndex.length){
+                bestIndex = indexesNames[i];
+                bestPosition = i;
+                break;
+            }else if (isValidIndex[i] && indexesNames[i].length < bestIndex.length){
+                bestIndex = indexesNames[i];
+                bestPosition = i;
+            }
+        }
+//        System.out.println("Best index: "+ Arrays.toString(bestIndex) + ", found at position: [" +bestPosition+ "]");
+
+        // fetching the correct data
+        List<Long> positionList = fetchValidElementsOffset(indexes[bestPosition],
+                indexesNames[bestPosition], labelsWanted[bestPosition], valueWanted);
+        seekPosition(filePath, positionList);
     }
 
     private static void intersectionExample(String filePath) {
