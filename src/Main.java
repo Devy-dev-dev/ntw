@@ -67,28 +67,29 @@ public class Main {
         // INDEX 1
         Index index = new Index();
 
-        String[] indexesNames = {"vendor_name", "Passenger_Count", "surcharge"};
-//        String[] indexesNames = {"vendor_name"};
+        String[] indexesNames = {"vendor_name", "Payment_Type"};
         int[] indexes = index.getLabelPos(indexesNames);
 
         workingOnFile(index, indexes);
 
 
-        // fetching
-        List<String> valuesWanted = Arrays.asList("CMT", "4", "0");
-        List<Long> bytesOffsetList = index.getBytesOffset(valuesWanted);
 
         // Find all Keys :
         Set<List<String>> keysSet = index.keys.keySet();
 
-        // find nb pasenger = 4 --> 2nd index = 4
         List<List<String>> indexWanted = new ArrayList<>();
-        int indexAsked = index.getUserNamePos("Passenger_Count", indexesNames);
-        String valueWanted = "4";
+        String[] labelWanted = {"vendor_name"};
+        String[] valueWanted = {"VTS"};
+
+        int[] indexAsked = index.getUserNamePos(labelWanted, indexesNames);
         index.retrieveNarrowerIndex(keysSet, indexWanted, indexAsked, valueWanted);
 
         System.out.println(indexWanted);
-        seekPosition(indexWanted, index);
+        List<List<Long>> indexList = index.getBytesOffsetList(indexWanted);
+
+
+        for (List<Long> longs : indexList) System.out.println(longs);
+//        seekPosition(indexWanted, index);
 
 
 

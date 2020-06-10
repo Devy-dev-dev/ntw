@@ -53,6 +53,18 @@ public class Index {
         return this.keys.get(key);
     }
 
+
+    public List<List<Long>> getBytesOffsetList(List<List<String>> keys){
+        List<List<Long>> keysList = new ArrayList<>();
+        for (List<String> key : keys) {
+            List<Long> currentList = getBytesOffset(key);
+            keysList.add(currentList);
+        }
+        return keysList;
+    }
+
+
+
     public int getLabelPos(String indexName){
         for (int i = 0; i < indexLabels.length; i++){
             if (indexName.equals(indexLabels[i]))
@@ -69,6 +81,7 @@ public class Index {
     }
 
 
+    // if a single label is asked (ex: "vendor_name") --> return its position
     public int getUserNamePos(String name, String[] userIndexNames){
         for (int i = 0; i < userIndexNames.length; i++){
             if (userIndexNames[i].equals(name))
@@ -77,9 +90,35 @@ public class Index {
         return -1;
     }
 
+    // if multiple label are asked, ex: {"vendor_name", "Payment_Type"} --> return their position
+    public int[] getUserNamePos(String[] names, String[] userIndexNames){
+        int[] namePositionInArray = new int[names.length];
+        for(int i = 0; i < names.length; i++)
+            namePositionInArray[i] = getUserNamePos(names[i], userIndexNames);
+        return namePositionInArray;
+    }
+
+    // if a single index is asked (ex: "vendor_name")
     public void retrieveNarrowerIndex(Set<List<String>> keysSet, List<List<String>> indexWanted, int indexAsked, String valueWanted) {
         for (List<String> currentSet : keysSet) {
             if (currentSet.get(indexAsked).equals(valueWanted))
+                indexWanted.add(currentSet);
+        }
+    }
+
+    // if multiple index are asked (ex: {"vendor_name", "Passenger_Count"})
+    public void retrieveNarrowerIndex(Set<List<String>> keysSet, List<List<String>> indexWanted, int[] indexAsked, String[] valueWanted) {
+        for (List<String> currentSet : keysSet) {
+            boolean isFound = true;
+
+            for(int i = 0; i < indexAsked.length; i++){
+                // O(n^2) bof bof
+                if (!currentSet.get(indexAsked[i]).equals(valueWanted[i])) {
+                    isFound = false;
+                    break;
+                }
+            }
+            if (isFound)
                 indexWanted.add(currentSet);
         }
     }
